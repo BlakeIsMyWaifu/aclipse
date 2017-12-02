@@ -1,14 +1,7 @@
-// get the discord.js lib so that we can actually do stuff
 const Discord = require('discord.js');
 
-// no need to make it asynchronous
-// the only argument we need is a question so we will name it that
 exports.run = (client, message, question) => {
-  
-  // we want to check if they actually asked a question before we start doing sruff
   if (!question[0]) return message.channel.sendMessage(':negative_squared_cross_mark: You must ask a question');
-  
-  // here is where we have all the answers in an object so we can get the correct colour with them
   let answerObj = {
     "It is certain": "#00FF00",
     "It is decidedly so": "#00FF00",
@@ -31,24 +24,11 @@ exports.run = (client, message, question) => {
     "Outlook not so good": "#FF0000",
     "Very doubtful": "#FF0000"
   };
-  
-  // we make the keys of the object into an array so we can pick on randomly
   let answerArray = Object.keys(answerObj);
-  
-  // this picks a random answer from the array
   let answer = answerArray[Math.floor(Math.random() * answerArray.length)];
-  
-  // this makes the embed
   const ballEmbed = new Discord.RichEmbed()
-  
-    // we want to set the colour according to what the response is
     .setColor(answerObj[answer])
-  
-    // we will make the title the embed what the question is
-    // we make the other part the random answer
     .addField(`:question: ${question.join(' ')}`, `:8ball: ${answer}`);
-  
-  // now we just send the embed
   return message.channel.send({embed: ballEmbed});
 };
 
