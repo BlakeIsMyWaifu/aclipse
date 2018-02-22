@@ -14,6 +14,7 @@ exports.cmdConfig = {
   name: "queue",
   aliases: ['musicqueue', 'playlist'],
   description: "Displays the music queue.",
-  usage: "queue",
-  type: "music"
+  usage: "",
+  type: "music",
+  permission: null
 };

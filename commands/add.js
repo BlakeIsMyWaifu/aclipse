@@ -19,6 +19,7 @@ exports.cmdConfig = {
   name: "add",
   aliases: ['musicadd'],
   description: "Adds a song to the queue.",
-  usage: "add <song>",
-  type: "music"
+  usage: "<song>",
+  type: "music",
+  permission: null
 };

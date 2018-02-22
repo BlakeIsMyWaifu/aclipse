@@ -34,11 +34,11 @@ exports.run = (client, message, word) => {
             }
             setTimeout(function() {
               requestIllegal();
-            }, 2000)
+            }, 5000)
           });
         } else {
           return message.channel.send({'files': [data.url]});
-        }      
+        }
       }
     });
   }
@@ -48,6 +48,7 @@ exports.cmdConfig = {
   name: "illegal",
   aliases: ['isn', 'isnowillegal'],
   description: "Makes a given thing illegal",
-  usage: "illegal <word>",
-  type: "fun"
+  usage: "<word>",
+  type: "fun",
+  permission: null
 };

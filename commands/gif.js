@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const request = require("request");
+
 exports.run = (client, message, [search, ...args]) => {
   const apiKey = process.env.GIPHY;
   if (search === "help" || search === undefined) {
@@ -14,6 +15,7 @@ exports.run = (client, message, [search, ...args]) => {
       .setTitle('**Gif Help**');
     for (let [cmdName, cmdUsage, cmdDesc] of cmdArray) {
        helpEmbed.addField(cmdName, `${settings.prefix}dashboard ${cmdName} ${cmdUsage}\n${cmdDesc}`);
+    }
     return message.channel.send({embed: helpEmbed});
   } else if (search === "search") {
     if (!args[0]) return message.channel.send(':negative_squared_cross_mark: You must give me a term to search');
@@ -36,11 +38,12 @@ exports.run = (client, message, [search, ...args]) => {
       var offset = 1;
     }
     offset -= 1;
-    var url = `https://api.giphy.com/v1/gifs/trending?api_key=${apiKey}&limit=25&rating=G`;
+    var url = `https://api.giphy.com/v1/gifs/trending?api_key=${apiKey}&limit=25&rating=G`; 
   } else if (search === "random") {
     if (!args[0]) return message.channel.send(':negative_squared_cross_mark: You must give me a term to search');
     var q = args.join(' ');
     var url = `https://api.giphy.com/v1/gifs/random?api_key=${apiKey}&tag=${q}&rating=G`;
+  }
   request.get({
     url: url,
     json: true,
@@ -68,6 +71,7 @@ exports.cmdConfig = {
   name: "gif",
   aliases: ['giphy'],
   description: "Searches giphy for a gif.",
-  usage: "gif",
-  type: "fun"
+  usage: "<command> [arguments]",
+  type: "fun",
+  permission: null
 };

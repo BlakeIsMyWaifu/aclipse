@@ -22,6 +22,7 @@ exports.cmdConfig = {
   name: "points",
   aliases: ['point', 'level', 'levels'],
   description: "Displays a users points",
-  usage: "points [@user]",
-  type: "fun"
+  usage: "[@user]",
+  type: "fun",
+  permission: null
 };

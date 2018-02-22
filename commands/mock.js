@@ -18,6 +18,7 @@ exports.cmdConfig = {
   name: "mock",
   aliases: ['toMemeCase'],
   description: "Mocks somebody by turning their message into meme case",
-  usage: "mock <text>",
-  type: "fun"
+  usage: "<text>",
+  type: "fun",
+  permission: null
 };

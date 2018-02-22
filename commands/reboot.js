@@ -10,6 +10,7 @@ exports.cmdConfig = {
   name: "reboot",
   aliases: ['restart'],
   description: "Turns off the bot.",
-  usage: "reboot",
-  type: "client"
+  usage: "",
+  type: "client",
+  permission: null
 };

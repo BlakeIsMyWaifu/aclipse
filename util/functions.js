@@ -5,7 +5,7 @@ module.exports = (client) => {
   client.log = (message) => {
     console.log(`[${moment().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
   };
-
+  
   client.vgs = (client, message) => {
     if (message.channel.type !== 'text') return;
     if (vgs[message.content.toLowerCase()]) {
@@ -98,6 +98,10 @@ module.exports = (client) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
   
+  client.roundToTwo = (number) => {
+    return +(Math.round(number + "e+2")  + "e-2");
+  };
+  
   client.isInArray = (array, string) => {
     return array.indexOf(string) > -1;
   };
@@ -110,8 +114,47 @@ module.exports = (client) => {
     }
   };
   
+  client.removeObjectFromArrayOfObjectsFromKeyAndValue = (array, key, value) => {
+    var i = array.length;
+    while (i--) {
+      if (array[i] && array[i].hasOwnProperty(key) && (arguments.length > 2 && array[i][key] === value)) {
+        array.splice(i, 1);
+      }
+    }
+    return array;
+  };
+  
+  client.chunkArray = (array, chunkSize) => {
+    var results = [];
+    while (array.length) {
+      results.push(array.splice(0, chunkSize));
+    }
+    return results;
+  };
+  
+  client.between = (x, min, max) => {
+    return x >= min && x <= max;
+  };
+  
+  client.romanize = (number) => {
+    if (number === 0) return 0;
+    if (!+number) return NaN;
+    var digits = String(+number).split("");
+    var key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM","","X","XX","XXX","XL","L","LX","LXX","LXXX","XC","","I","II","III","IV","V","VI","VII","VIII","IX"];
+    var roman = "";
+    var i = 3;
+    while (i--) {
+      roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+    }  
+    return Array(+digits.join("") + 1).join("M") + roman;
+  };
+  
   Array.prototype.random = function() {
     return this[Math.floor(Math.random() * this.length)]
+  };
+  
+  Array.prototype.contains = function(obj) {
+    return this.indexOf(obj) > -1;
   };
   
   String.prototype.toProperCase = function() {

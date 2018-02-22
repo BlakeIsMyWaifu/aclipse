@@ -5,10 +5,16 @@ module.exports = async client => {
   client.guilds.filter(g => !client.spoints.has(g.id)).forEach(g => client.spoints.set(g.id, client.config.serverPoints));
   let minutes = client.config.gameChangeTime;
   let interval = minutes * 60 * 1000;
+  let activity = {
+    "p": "PLAYING",
+    "s": "STREAMING",
+    "l": "LISTENING",
+    "w": "WATCHING"
+  };
   setInterval(function() {
     let game = client.config.games;
     game = game[Math.floor(Math.random() * game.length)];
-    client.user.setGame(game);
+    client.user.setActivity(game[1], {'type': activity[game[0]]});
   }, interval);
 };
 
@@ -17,11 +23,10 @@ const express = require('express');
 const app = express();
 
 app.get("/", (request, response) => {
-  //console.log(Date.now() + " Ping Received");
   response.sendStatus(200);
 });
 
 app.listen(process.env.PORT);
 setInterval(() => {
   http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
-}, 280000);
+}, 240000);

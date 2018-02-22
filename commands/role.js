@@ -28,7 +28,8 @@ exports.run = (client, message, args) => {
 exports.cmdConfig = {
   name: "role",
   aliases: ['roles'],
-  description: "Gives a user a role. Permission needed: MANAGE_ROLES.",
-  usage: "roles [<@user> <role>] | [<action> <args>]",
-  type: "mod"
+  description: "Gives a user a role.",
+  usage: "[<@user> <role>] | [<action> <args>]",
+  type: "mod",
+  permission: "MANAGE_ROLES"
 };

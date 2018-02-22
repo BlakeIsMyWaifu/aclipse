@@ -1,9 +1,12 @@
 const config = {
   "ownerId": "166641492113358848",
-  "games": ["SMITE", "with your mind", "nothing", "with fire", "with Kuzenbo's nene"],
+  "games": [["p", "SMITE"], ["p", "with Kuzenbo's nene"], ["w", "SexyRexsi's videos"], ["l", "some weeb shit"], ["l", "ProLeopard's Mixtape"]],
   "gameChangeTime": "20",
+  "blacklist": ["224640341943386112"],
   "replyObj": {
-    "rexsi": "lol"
+    "rexsi": "lol",
+    "what do i build on ganesha?": "lotus crown",
+    "^": "what this fine intellectual said"
   },
   "musicPasses": "1",
   "serverPoints": {},

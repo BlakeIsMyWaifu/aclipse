@@ -67,7 +67,8 @@ exports.run = async (client, message, [search, key, ...value]) => {
 exports.cmdConfig = {
   name: "dashboard",
   aliases: ['db', 'settings'],
-  description: "Changes the bots settings for the server. Permission needed: ADMINISTRATOR",
-  usage: "dashboard <command> [key] [value]",
-  type: "mod"
+  description: "Changes the bots settings for the server.",
+  usage: "<command> [key] [value]",
+  type: "mod",
+  permission: "ADMINISTRATOR"
 };

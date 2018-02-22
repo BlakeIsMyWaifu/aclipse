@@ -12,6 +12,7 @@ exports.cmdConfig = {
   name: "reload",
   aliases: [],
   description: "Reloads the command file, if it's been updated or modified.",
-  usage: "reload <commandname>",
-  type: "client"
+  usage: "<command>",
+  type: "client",
+  permission: null
 };

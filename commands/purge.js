@@ -1,25 +1,26 @@
 exports.run = function(client, message, args) {
   let manageMessages = message.member.hasPermission("MANAGE_MESSAGES");
   if (manageMessages === false) return message.channel.send(':negative_squared_cross_mark: You do not have permission. You need \`MANAGE_MESSAGES\`');
-  let messageCount = parseInt(args);
-  if (isNaN(messageCount) && messageCount) return message.channel.send(`:negative_squared_cross_mark: ${messageCount} is not a number`);
-  if (!messageCount) {
-    message.channel.bulkDelete(20);
-  } else if (messageCount <= 50 || messageCount >= 2) {
-    message.channel.fetchMessages({
-      limit: messageCount
-    }).then(messages => message.channel.bulkDelete(messages));
-  } else if (messageCount < 51) {
-    return message.channel.sendMessage(`:negative_squared_cross_mark: ${messageCount} is too big (max is 50)`);
-  } else if (messageCount > 3) {
-    return message.channel.sendMessage(`:negative_squared_cross_mark: ${messageCount} is too small (minium is 2)`);
-  }
+  const user = message.mentions.users.first();
+  const amount = !!parseInt(args[0]) ? parseInt(args[0]) : parseInt(args[1]);
+  if (!amount) return message.channel.send(':negative_squared_cross_mark: Must specify an amount to delete!');
+  if (!amount && !user) return message.channel.send(':negative_squared_cross_mark: Must specify a user and amount, or just an amount, of messages to purge!');
+  message.channel.fetchMessages({
+   limit: amount,
+  }).then((messages) => {
+    if (user) {
+      const filterBy = user ? user.id : client.user.id;
+      messages = messages.filter(m => m.author.id === filterBy).array().slice(0, amount);
+    }
+    message.channel.bulkDelete(messages);
+  });
 };
 
 exports.cmdConfig = {
   name: "purge",
   aliases: ['p'],
-  description: "Purges X amount of messages from a given channel. If no given amount of messages to delete, it will delete 20. Permission needed: MANAGE_MESSAGES.",
-  usage: "purge [number]",
-  type: "mod"
+  description: "Purges X amount of messages from a given channel. If no given amount of messages to delete, it will delete 20.",
+  usage: "<number>",
+  type: "mod",
+  permission: "MANAGE_MESSAGES"
 };

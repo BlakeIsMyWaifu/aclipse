@@ -24,7 +24,8 @@ exports.run = (client, message, args) => {
 exports.cmdConfig = {
   name: "kick",
   aliases: [],
-  description: "Kicks the mentioned user. Permission needed: KICK_MEMBERS.",
-  usage: "kick <@user> [reason]",
-  type: "mod"
+  description: "Kicks the mentioned user.",
+  usage: "<@user> [reason]",
+  type: "mod",
+  permission: "KICK_MEMBERS"
 };

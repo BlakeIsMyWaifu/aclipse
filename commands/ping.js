@@ -7,6 +7,7 @@ exports.cmdConfig = {
   name: "ping",
   aliases: [],
   description: "Ping/Pong command. I wonder what this does?",
-  usage: "ping",
-  type: "core"
+  usage: "",
+  type: "core",
+  permission: null
 };

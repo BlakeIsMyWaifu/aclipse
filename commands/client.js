@@ -1,3 +1,5 @@
+const { inspect } = require("util");
+
 exports.run = async (client, message, [search, ...args]) => {
   if (message.author.id !== client.config.ownerId) return;
   if (!args[0]) return message.channel.send(':negative_squared_cross_mark: !args');
@@ -72,10 +74,6 @@ exports.run = async (client, message, [search, ...args]) => {
 //     });
 // let image = await fs.readFile('../data/canvas/image/bonobo.png');
 // message.channel.send(image)
-    
-    const { inspect } = require("util");
-    const spoints = client.spoints.get(message.guild.id);
-    return message.channel.send(inspect(spoints), {code: "json"});
   } else {
     return message.channel.send(':negative_squared_cross_mark: else');
   }
@@ -85,6 +83,7 @@ exports.cmdConfig = {
   name: "client",
   aliases: [],
   description: "go away",
-  usage: "client <command> [args]",
-  type: "client"
+  usage: "<command> [arguments]",
+  type: "client",
+  permission: null
 };

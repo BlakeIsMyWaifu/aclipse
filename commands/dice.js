@@ -7,6 +7,7 @@ exports.cmdConfig = {
   name: "dice",
   aliases: ['roll', 'rtd', 'rolldice'],
   description: "Rolls a dice.",
-  usage: "dice [sides]",
-  type: "fun"
+  usage: "[sides]",
+  type: "fun",
+  permission: null
 };

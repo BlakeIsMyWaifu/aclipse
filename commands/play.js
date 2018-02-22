@@ -47,6 +47,7 @@ exports.cmdConfig = {
   name: "play",
   aliases: ['musicplay'],
   description: "Plays the queue.",
-  usage: "play",
-  type: "music"
+  usage: "",
+  type: "music",
+  permission: null
 };

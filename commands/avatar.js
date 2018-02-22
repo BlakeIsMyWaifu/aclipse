@@ -10,6 +10,7 @@ exports.cmdConfig = {
   name: "avatar",
   aliases: ['ava'],
   description: "Displays a users avatar.",
-  usage: "avatar [@user]",
-  type: "info"
+  usage: "[@user]",
+  type: "info",
+  permission: null
 };

@@ -37,6 +37,7 @@ exports.cmdConfig = {
   name: "account",
   aliases: ['acc'],
   description: "Displays infomation about a person.",
-  usage: "account [@user]",
-  type: "info"
+  usage: "[@user]",
+  type: "info",
+  permission: null
 };

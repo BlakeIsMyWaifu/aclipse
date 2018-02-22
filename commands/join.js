@@ -10,6 +10,7 @@ exports.cmdConfig = {
   name: "join",
   aliases: ['musicjoin'],
   description: "Joins the message author's voice channel.",
-  usage: "join",
-  type: "music"
+  usage: "",
+  type: "music",
+  permission: null
 };

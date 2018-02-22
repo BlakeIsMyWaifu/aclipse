@@ -9,6 +9,7 @@ exports.cmdConfig = {
   name: "poll",
   aliases: ['createpoll'],
   description: "Creates a poll that people can vote using reactions.",
-  usage: "poll",
-  type: "fun"
+  usage: "[question]",
+  type: "fun",
+  permission: null
 };

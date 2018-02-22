@@ -23,6 +23,7 @@ exports.cmdConfig = {
   name: "stats",
   aliases: [],
   description: "Provides some information about this bot.",
-  usage: "stats",
-  type: "info"
+  usage: "",
+  type: "info",
+  permission: null
 };

@@ -14,6 +14,7 @@ exports.cmdConfig = {
   name: "eval",
   aliases: [],
   description: "Evaluates arbitrary Javascript.",
-  usage: "eval <expression>",
-  type: "client"
+  usage: "<expression>",
+  type: "client",
+  permission: null
 };

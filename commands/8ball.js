@@ -36,6 +36,7 @@ exports.cmdConfig = {
   name: "8ball",
   aliases: ['8', 'magic8'],
   description: "A magic 8ball. Ask it any yes or no question and it will answer you. It never lies unless it lies.",
-  usage: "8ball <question>",
-  type: "fun"
+  usage: "<question>",
+  type: "fun",
+  permission: null
 };

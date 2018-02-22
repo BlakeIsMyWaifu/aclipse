@@ -1,4 +1,3 @@
-const Discord = require('discord.js');
 const cheerio = require('cheerio');
 const snekfetch = require('snekfetch');
 const querystring = require('querystring');
@@ -19,8 +18,9 @@ exports.run = async (client, message, args) => {
 
 exports.cmdConfig = {
   name: "google",
-  aliases: [],
-  description: "Googles.",
-  usage: "google <question>",
-  type: "info"
+  aliases: ['lmgtfu'],
+  description: "Googles. Enough said.",
+  usage: "<question>",
+  type: "info",
+  permission: null
 };
