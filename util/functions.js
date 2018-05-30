@@ -3,37 +3,37 @@ const vgs = require('../data/vgs.json');
 
 module.exports = (client) => {
   client.log = (message) => {
-    console.log(`[${moment().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
+    console.log(`[${moment().format("HH:mm:ss")}] ${message}`);
   };
-  
+
   client.vgs = (client, message) => {
     if (message.channel.type !== 'text') return;
     if (vgs[message.content.toLowerCase()]) {
       message.channel.send(vgs[message.content.toLowerCase()]);
     }
   };
-  
+
   client.replyArray = (client, message) => {
     if (message.channel.type !== 'text') return;
     if (client.config.replyObj[message.content.toLowerCase()]) {
       message.channel.send(client.config.replyObj[message.content.toLowerCase()]);
     }
   };
-  
+
   client.pointsMonitor = (client, message) => {
     if (message.channel.type !=='text') return;
     const score = client.gpoints.get(message.author.id) || { points: 0, level: 0 };
     score.points++;
     score.level = Math.floor(0.1 * Math.sqrt(score.points));
     client.gpoints.set(message.author.id, score);
-    
+
     const spoints = client.spoints.get(message.guild.id);
     if (!spoints[message.author.id] || spoints[message.author.id] === NaN) spoints[message.author.id] = [0, 0];
     spoints[message.author.id] = [parseInt(spoints[message.author.id][0]) + 1, parseInt(spoints[message.author.id][1]) + 1];
     client.spoints.set(message.guild.id, spoints);
   };
 
-  
+
   client.awaitReply = async (msg, question, limit = 60000) => {
     const filter = m => m.author.id = msg.author.id;
     await msg.channel.send(question);
@@ -97,15 +97,15 @@ module.exports = (client) => {
   client.randomNum = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
-  
+
   client.roundToTwo = (number) => {
     return +(Math.round(number + "e+2")  + "e-2");
   };
-  
+
   client.isInArray = (array, string) => {
     return array.indexOf(string) > -1;
   };
-  
+
   client.searchArrayOfObjects = (array, key, value) => {
     for (var i=0; i < array.length; i++) {
       if (array[i][key] === value) {
@@ -113,7 +113,7 @@ module.exports = (client) => {
       }
     }
   };
-  
+
   client.removeObjectFromArrayOfObjectsFromKeyAndValue = (array, key, value) => {
     var i = array.length;
     while (i--) {
@@ -123,7 +123,7 @@ module.exports = (client) => {
     }
     return array;
   };
-  
+
   client.chunkArray = (array, chunkSize) => {
     var results = [];
     while (array.length) {
@@ -131,11 +131,11 @@ module.exports = (client) => {
     }
     return results;
   };
-  
+
   client.between = (x, min, max) => {
     return x >= min && x <= max;
   };
-  
+
   client.romanize = (number) => {
     if (number === 0) return 0;
     if (!+number) return NaN;
@@ -145,26 +145,30 @@ module.exports = (client) => {
     var i = 3;
     while (i--) {
       roman = (key[+digits.pop() + (i * 10)] || "") + roman;
-    }  
+    }
     return Array(+digits.join("") + 1).join("M") + roman;
   };
-  
+
   Array.prototype.random = function() {
-    return this[Math.floor(Math.random() * this.length)]
+    return this[Math.floor(Math.random() * this.length)];
   };
-  
+
   Array.prototype.contains = function(obj) {
     return this.indexOf(obj) > -1;
   };
-  
+
   String.prototype.toProperCase = function() {
     return this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
   };
-  
+
   String.prototype.toMemeCase = function() {
     return this.split('').map((v, i) => i % 2 == 0 ? v.toLowerCase() : v.toUpperCase()).join('');
   };
-  
+
+  String.prototype.camelToSpace = function() {
+    return this.replace(/([A-Z])/g, ' $1');
+  };
+
   Object.prototype.getKeyByValue = function(value) {
     for (var prop in this) {
       if (this.hasOwnProperty(prop)) {
@@ -174,18 +178,19 @@ module.exports = (client) => {
       }
     }
   };
-  
+
   Array.min = function(array) {
     return Math.min.apply(Math, array);
   };
-  
+
   Array.max = function(array) {
     return Math.max.apply(Math, array);
   };
-  
+
   process.on("uncaughtException", (err) => {
-    const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
-    console.error("Uncaught Exception: ", errorMsg);
+    console.log(err);
+    // const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
+    // console.error("Uncaught Exception: ", errorMsg);
     process.exit(1);
   });
 
