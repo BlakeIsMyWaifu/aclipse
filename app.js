@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 if (process.version.slice(1).split(".")[0] < 8) throw new Error("Node 8.0.0 or higher is required. Update Node on your system.");
 
 const Discord = require("discord.js");
@@ -10,12 +12,17 @@ client.config = require("./config.js");
 require("./util/functions.js")(client);
 client.commands = new Enmap();
 client.aliases = new Enmap();
-client.queue = new Enmap();
 client.fight = new Enmap();
+client.queue = new Enmap();
+client.mixer = new Enmap();
+client.voice = new Enmap();
+client.playlist = new Enmap({provider: new EnmapLevel({name: "playlist"})});
+client.osu = new Enmap({provider: new EnmapLevel({name: "osu"})});
 client.smite = new Enmap({provider: new EnmapLevel({name: "smite"})});
 client.settings = new Enmap({provider: new EnmapLevel({name: "settings"})});
 client.gpoints = new Enmap({provider: new EnmapLevel({name: "gpoints"})});
 client.spoints = new Enmap({provider: new EnmapLevel({name: "spoints"})});
+client.clever = new Enmap({provider: new EnmapLevel({name: "clever"})});
 
 const init = async () => {
   const cmdFiles = await readdir("./commands/");
@@ -32,6 +39,7 @@ const init = async () => {
     const event = require(`./events/${file}`);
     client.on(eventName, event.bind(null, client));
     delete require.cache[require.resolve(`./events/${file}`)];
+    client.log(`Loading Event: ${eventName}`);
   });
   client.login(process.env.TOKEN);
 };
