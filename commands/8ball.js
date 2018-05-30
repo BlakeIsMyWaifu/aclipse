@@ -25,7 +25,7 @@ exports.run = (client, message, question) => {
     "Very doubtful": "#FF0000"
   };
   let answerArray = Object.keys(answerObj);
-  let answer = answerArray[Math.floor(Math.random() * answerArray.length)];
+  let answer = answerArray.random();
   const ballEmbed = new Discord.RichEmbed()
     .setColor(answerObj[answer])
     .addField(`:question: ${question.join(' ')}`, `:8ball: ${answer}`);

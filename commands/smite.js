@@ -11,6 +11,24 @@ exports.run = async (client, message, [search, ...args]) => {
   const settings = client.settings.get(message.guild.id);
   search = search ? search.toLowerCase() : "help";
   var cmdObj = {
+    "help": {
+      "name": "help",
+      "aliase": ["h"],
+      "usage": "",
+      "desc": "Displayes all smite commands and how to use them",
+      "args": null,
+      "hidden": false,
+      "api": [false],
+      "func": function () {
+        const helpEmbed = new Discord.RichEmbed()
+          .setColor(settings.embedColour)
+          .setTitle('**Smite Help**');
+        for (let cmd of cmdArray) {
+          if (cmdObj[cmd]["hidden"] === false) helpEmbed.addField(cmdObj[cmd]["name"].toProperCase(), `${settings.prefix}smite ${cmdObj[cmd].name} ${cmdObj[cmd].usage}\n${cmdObj[cmd].desc}`);
+        }
+        return message.channel.send({embed: helpEmbed});
+      }
+    },
     "ability": {
       "name": "ability",
       "aliase": [],
@@ -55,7 +73,7 @@ exports.run = async (client, message, [search, ...args]) => {
     "clan": {
       "name": "clan",
       "aliase": ["clans"],
-      "usage": "<CLAN>",
+      "usage": "<clan>",
       "desc": "Displays infomation on a chosen Clan",
       "args": "Which clan would you like me to look up?",
       "hidden": false,
@@ -157,25 +175,7 @@ exports.run = async (client, message, [search, ...args]) => {
         for (let name of f) {
           if (name.name !== "") friendsArray.push(name.name)
         }
-        return message.channel.send(`== ${args[0].replace(/_/g, ' ')} ==\n[Total Friends - ${f.length}]\n\n${friendsArray.join(', ')}`, {code: "asciidoc"}); 
-      }
-    },
-    "help": {
-      "name": "help",
-      "aliase": ["h"],
-      "usage": "",
-      "desc": "Displayes all smite commands and how to use them",
-      "args": null,
-      "hidden": false,
-      "api": [false],
-      "func": function () {
-        const helpEmbed = new Discord.RichEmbed()
-          .setColor(settings.embedColour)
-          .setTitle('**Smite Help**');
-        for (let cmd of cmdArray) {
-          if (cmdObj[cmd]["hidden"] === false) helpEmbed.addField(cmdObj[cmd]["name"].toProperCase(), `${settings.prefix}smite ${cmdObj[cmd].name} ${cmdObj[cmd].usage}\n${cmdObj[cmd].desc}`);
-        }
-        return message.channel.send({embed: helpEmbed});
+        return message.channel.send(`== ${args[0].replace(/_/g, ' ')} ==\n[Total Friends - ${f.length}]\n\n${friendsArray.join(', ')}`, {code: "asciidoc"});
       }
     },
     "history": {
@@ -420,7 +420,7 @@ exports.run = async (client, message, [search, ...args]) => {
           var masteryEmbed = new Discord.RichEmbed()
             .setColor(settings.embedColour)
             .addField(`${user.toProperCase()}'${s} stats for ${g.god}`, main(g));
-        } else {      
+        } else {
           var masteryEmbed = new Discord.RichEmbed()
             .setColor(settings.embedColour)
             .setTitle(`${user}'${s} Masteries`);
@@ -459,6 +459,85 @@ exports.run = async (client, message, [search, ...args]) => {
         stream.on('end', function() {
           message.channel.send({file: __dirname + `/../data/canvas/smite/matchout.png`});
         });
+      }
+    },
+    "mixer": {
+      "name": "mixer",
+      "aliase": ["code", "codes"],
+      "usage": "",
+      "desc": "?",
+      "args": null,
+      "hidden": true,
+      "api": [false],
+      "func": function () {
+        if (Object.keys(client.mixer).length === 0) {client.mixer = {status: false, code: {}, guild: {}};}
+        var onlineOptions = {
+          url: "https://mixer.com/api/v1/channels/19088261/broadcast",
+          json: true,
+          headers: {'User-Agent': 'request'}
+        };
+        function onlineCallbackStart(error, response, d) {
+          if (response.statusCode === 404) return message.channel.send(':negative_squared_cross_mark: The stream is offline');
+        }
+        function onlineCallbackStop(error, response, d) {
+          if (response.statusCode === 404) {
+            for (let c of Object.keys(client.mixer.guild)) {
+              let chnl = client.channels.get(client.mixer.guild[c]);
+              chnl.send('Mixer off (Stream turned off)');
+            }
+            client.mixer = {status: false, code: {}, guild: {}};
+          }
+        }
+        request(onlineOptions, onlineCallbackStart);
+        if (args[0] === 'view') {
+          if (Object.keys(client.mixer.code).length === 0) return message.channel.send(':negative_squared_cross_mark: No codes have been given out yet');
+          const settings = client.settings.get(message.guild.id);
+          let codes = [];
+          Object.keys(client.mixer.code).forEach(function(code) {
+            codes.push(`[${client.mixer.code[code]}] ${code.replace('Most recent code: ', '')}`);
+          });
+          const viewEmbed = new Discord.RichEmbed()
+            .setColor(settings.embedColour)
+            .setFooter('timezone is GMT i think maybe? no idea')
+            .addField('Smite Mixer Codes:', codes.reverse().join('\n'));
+          return message.channel.send({embed: viewEmbed});
+        } else {
+          if (client.mixer.guild.hasOwnProperty(message.guild.id)) {
+            if (client.mixer.guild[message.guild.id] === message.channel.id) {
+              delete client.mixer.guild[message.guild.id];
+              if (Object.keys(client.mixer.guild).lenght === 0) {client.mixer.status = false;}
+              return message.channel.send('Mixer off');
+            } else {
+              return message.channel.send(`:negative_squared_cross_mark: Mixer has already been activated in \`${client.channels.get(client.mixer.guild[message.guild.id]).name}\``);
+            }
+          } else {
+            if (client.mixer.status === false) {client.mixer.status = true;}
+            client.mixer.guild[message.guild.id] = message.channel.id;
+            message.channel.send('Mixer on');
+            var loop = setInterval(function() {
+              request(onlineOptions, onlineCallbackStop);
+              if (client.mixer.status === false) clearInterval(loop);
+              request.get({
+                url: "https://mixer.com/api/v1/chats/19088261/history",
+                json: true,
+                headers: {'User-Agent': 'request'}
+              }, (err, res, data) => {
+                for (let m of data) {
+                  if (m.user_name === "Scottybot" && m.message.message[0].data.startsWith('Most')) {
+                    let msg = m.message.message[0].data.replace('[', '').replace(']', '');
+                    if (!Object.keys(client.mixer.code).includes(msg)) {
+                      client.mixer.code[msg] = moment().format("k : mm : ss");
+                      for (let c of Object.keys(client.mixer.guild)) {
+                        let chnl = client.channels.get(client.mixer.guild[c]);
+                        chnl.send(msg);
+                      }
+                    }
+                  }
+                }
+              });
+            }, 8000);
+          }
+        }
       }
     },
     "player": {
@@ -519,7 +598,7 @@ exports.run = async (client, message, [search, ...args]) => {
       "usage": "",
       "desc": "?",
       "args": null,
-      "hidden": false,
+      "hidden": true,
       "api": [false],
       "func": function () {
         let categories = {
@@ -628,7 +707,7 @@ exports.run = async (client, message, [search, ...args]) => {
                   "itemStats": {
                     "a": d,
                     "g": [
-                      
+
                     ]
                   }
                 };
@@ -659,7 +738,7 @@ exports.run = async (client, message, [search, ...args]) => {
   var platform = client.isInArray(platformArray, args[args.length - 1]) ? platformObj[args[args.length - 1]] : (client.isInArray(platformArray, args[args.length - 2])) ? platformObj[args[args.length - 2]] : "pc";
   var domain = platform === "xbox" ? "http://api.xbox.smitegame.com/smiteapi.svc/" : (platform === "ps4") ? "http://api.ps4.smitegame.com/smiteapi.svc/" : "http://api.smitegame.com/smiteapi.svc/";
   var devID = process.env.SMITEDEVID;
-  var timestamp = moment().format('YYYYMMDDHHmmss');
+  var timestamp = moment().utc().format('YYYYMMDDHHmmss');
   var authKey = process.env.SMITEAUTHID;
   function createSignature(method) {
     return md5(`${devID}${method}${authKey}${timestamp}`);
@@ -741,7 +820,7 @@ exports.run = async (client, message, [search, ...args]) => {
     "consumable": ["Type", "Consumable"],
     "consumables": ["Type", "Consumable"]
   };
-  var itemArray = Object.keys(itemObj); 
+  var itemArray = Object.keys(itemObj);
   var gamemodeObj = {
     "all": "all gamemodes",
     "arena": "arena",
@@ -962,7 +1041,7 @@ exports.run = async (client, message, [search, ...args]) => {
   function requestData(method, parameters) {
     var signature = createSignature(method);
     let url = domain + `${method}Json/${devID}/${signature}/${client.smite.get(`session${platform}`)}/${timestamp}/${parameters}`;
-    console.log(url);
+    //console.log(url);
     request.get({
       url: url,
       json: true,
@@ -973,6 +1052,10 @@ exports.run = async (client, message, [search, ...args]) => {
       } else if (res.statusCode !== 200) {
         return message.channel.send(':negative_squared_cross_mark: Status: ' + res.statusCode);
       } else {
+        // console.log(data);
+        if (data.length !== 0) {
+          if (data[0].ret_msg !== null) return message.channel.send(':negative_squared_cross_mark: Error: ' + data[0].ret_msg);
+        }
         cmdObj[search].func(data);
       }
     });

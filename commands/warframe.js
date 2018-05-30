@@ -5,6 +5,7 @@ const moment = require('moment');
 exports.run = (client, message, [search, ...args]) => {
   const settings = client.settings.get(message.guild.id);
   search = search ? search.toLowerCase() : "help";
+  var timeNow = moment();
   const wfEmbed = (time) => {
     const embed = new Discord.RichEmbed()
       .setColor(settings.embedColour)
@@ -13,28 +14,63 @@ exports.run = (client, message, [search, ...args]) => {
   }
   var cmdObj = {
     "active": {
-      "name": "",
+      "name": "active",
       "aliase": [],
       "usage": "",
-      "desc": "",
+      "desc": "?",
       "args": null,
       "hidden": false,
       "func": function (data, embed) {
-        
+
       }
     },
     "alerts": {
       "name": "alerts",
-      "aliase": [],
+      "aliase": ['alert'],
       "usage": "",
       "desc": "Displayes the current alerts",
       "args": null,
       "hidden": false,
       "func": function (data, embed) {
-        let timeNow = moment();
-        data.Alerts.forEach(function(a) {
-          let endTime = moment.unix(parseInt(a.Date.$date.$numberLong) / 1000);
-          embed.addField()
+        var sortData = function (prop, array) {
+          prop = prop.split('.');
+          var len = prop.length;
+          array.sort(function(a, b) {
+            var i = 0;
+            while(i < len) {a = a[prop[i]]; b = b[prop[i]]; i++;}
+            if (a < b) {
+              return -1;
+            } else if (a > b) {
+              return 1;
+            } else {
+              return 0;
+            }
+          });
+          return array;
+        };
+        let alerts = sortData('Activation.$date.$numberLong', data.Alerts);
+        alerts.forEach(function(a) {
+          let timeEnd = moment(parseInt(a.Expiry.$date.$numberLong));
+          let r = [];
+          if (a.MissionInfo.missionReward.hasOwnProperty('items') === true) {
+            a.MissionInfo.missionReward.items.forEach(function(i) {
+              r.push(i.split('/')[i.split('/').length - 1].camelToSpace());
+            });
+          } else if (a.MissionInfo.missionReward.hasOwnProperty('countedItems') === true) {
+            a.MissionInfo.missionReward.countedItems.forEach(function(i) {
+              r.push(i.ItemCount + ' ' + i.ItemType.split('/')[i.ItemType.split('/').length - 1].camelToSpace());
+            });
+          }
+          let info = [
+            `**Start Time:** ${moment(parseInt(a.Activation.$date.$numberLong)).format('h:mm')}`,
+            `**End Time:** ${moment(parseInt(a.Expiry.$date.$numberLong)).format('h:mm')}`,
+            `**Reward:** ${a.MissionInfo.missionReward.credits} Credits ${r.length === 0 ? '' : '+ '}${r}`,
+            `**Type:** ${a.MissionInfo.missionType.replace('MT_', '').replace(/_/g, ' ').toProperCase()}`,
+            `**Faction:** ${a.MissionInfo.faction.split('_')[1].toProperCase()}`,
+            `**Location:** ${a.MissionInfo.location}`,
+            `**Level Override:** ${a.MissionInfo.levelOverride.split('/')[a.MissionInfo['levelOverride'].split('/').length - 1].camelToSpace()}`
+          ];
+          embed.addField(`${moment(parseInt(a.Expiry.$date.$numberLong)).diff(timeNow, 'minutes')} Minutes (${a.MissionInfo.minEnemyLevel} - ${a.MissionInfo.maxEnemyLevel})`, info.join('\n'));
         })
         return message.channel.send({embed: embed});
       }
@@ -48,10 +84,8 @@ exports.run = (client, message, [search, ...args]) => {
       "hidden": false,
       "func": function (data, embed) {
         let events = [];
-        let timeNow = moment();
         data.Events.forEach(function(e) {
-          let eventTime = moment.unix(parseInt(e.Date.$date.$numberLong) / 1000);
-          events.push(`**[${timeNow.diff(eventTime, 'days')}d]** ${e.Messages[0].Message}`);
+          events.push(`**[${timeNow.diff(moment(parseInt(e.Date.$date.$numberLong)), 'days')}d]** ${e.Messages[0].Message}`);
         });
         events.reverse();
         embed.addField('Events', events.join('\n'));
@@ -76,32 +110,32 @@ exports.run = (client, message, [search, ...args]) => {
       }
     },
     "invasion": {
-      "name": "",
+      "name": "invasion",
       "aliase": [],
       "usage": "",
-      "desc": "",
+      "desc": "?",
       "args": null,
       "hidden": false,
       "func": function (data, embed) {
-        
+
       }
     },
     "sale": {
-      "name": "",
+      "name": "sale",
       "aliase": [],
       "usage": "",
-      "desc": "",
+      "desc": "?",
       "args": null,
       "hidden": false,
       "func": function (data, embed) {
-      
+
       }
     },
     "sortie": {
       "name": "sortie",
       "aliase": [],
       "usage": "",
-      "desc": "",
+      "desc": "?",
       "args": null,
       "hidden": false,
       "func": function (data, embed) {
@@ -109,14 +143,14 @@ exports.run = (client, message, [search, ...args]) => {
       }
     },
     "syndicate": {
-      "name": "",
+      "name": "syndicate",
       "aliase": [],
       "usage": "",
       "desc": "",
       "args": null,
       "hidden": false,
       "func": function (data, embed) {
-      
+
       }
     }
   }
