@@ -19,4 +19,5 @@ I started doing comments on some things. Commands I have commented
 * dice
 * gif
 * smite (REALLLLY old version but still working with lots of stuff)
+
 Some may be a little outdated but I will work on finishing all before going back and updating.
